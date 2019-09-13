@@ -62,7 +62,9 @@ public class ActiveMQConnectionFactory extends JNDIBaseStorable implements Conne
     private static final Logger LOG = LoggerFactory.getLogger(ActiveMQConnectionFactory.class);
     private static final String DEFAULT_BROKER_HOST;
     private static final int DEFAULT_BROKER_PORT;
-    static{
+
+    static {
+        // 初始化默认的broker host和port。根据系统变量获取，未配置则默认localhost:61616.
         String host = null;
         String port = null;
         try {
@@ -95,6 +97,7 @@ public class ActiveMQConnectionFactory extends JNDIBaseStorable implements Conne
     public static final String DEFAULT_BROKER_BIND_URL;
 
     static{
+        // 初始化默认的broker url，如 tcp://localhost:61616
         final String defaultURL = "tcp://" + DEFAULT_BROKER_HOST + ":" + DEFAULT_BROKER_PORT;
         String bindURL = null;
 
@@ -457,8 +460,8 @@ public class ActiveMQConnectionFactory extends JNDIBaseStorable implements Conne
         // options.
         if (this.brokerURL.getQuery() != null) {
             // It might be a standard URI or...
+            // 如果有queryString参数，则解析参数并设置到对应的策略对象中。
             try {
-
                 Map<String,String> map = URISupport.parseQuery(this.brokerURL.getQuery());
                 Map<String,Object> jmsOptionsMap = IntrospectionSupport.extractProperties(map, "jms.");
                 if (buildFromMap(jmsOptionsMap)) {
