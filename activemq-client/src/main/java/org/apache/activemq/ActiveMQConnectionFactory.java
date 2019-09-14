@@ -310,7 +310,9 @@ public class ActiveMQConnectionFactory extends JNDIBaseStorable implements Conne
     /**
      * Creates a Transport based on this object's connection settings. Separated
      * from createActiveMQConnection to allow for subclasses to override.
-     *
+     * 创建数据传输器
+     * @see org.apache.activemq.transport.tcp.TcpTransportServer
+     * @see org.apache.activemq.transport.tcp.TcpTransport
      * @return The newly created Transport.
      * @throws JMSException If unable to create trasnport.
      */

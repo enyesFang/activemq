@@ -36,6 +36,9 @@ import org.apache.activemq.wireformat.WireFormatFactory;
 
 public abstract class TransportFactory {
 
+    /**
+     * client端的工程修改该目录下的transport properties文件可以自定义拓展。类似SPI。
+     */
     private static final FactoryFinder TRANSPORT_FACTORY_FINDER = new FactoryFinder("META-INF/services/org/apache/activemq/transport/");
     private static final FactoryFinder WIREFORMAT_FACTORY_FINDER = new FactoryFinder("META-INF/services/org/apache/activemq/wireformat/");
     private static final ConcurrentMap<String, TransportFactory> TRANSPORT_FACTORYS = new ConcurrentHashMap<String, TransportFactory>();

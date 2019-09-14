@@ -57,8 +57,9 @@ public class BrokerInfo extends BaseCommand {
         super.copy(copy);
         copy.brokerId = this.brokerId;
         copy.brokerURL = this.brokerURL;
-        copy.slaveBroker = this.slaveBroker;
+        // broker 主备。
         copy.masterBroker = this.masterBroker;
+        copy.slaveBroker = this.slaveBroker;
         copy.faultTolerantConfiguration = this.faultTolerantConfiguration;
         copy.networkConnection = this.networkConnection;
         copy.duplexConnection = this.duplexConnection;

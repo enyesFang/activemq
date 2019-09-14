@@ -43,6 +43,10 @@ import org.apache.activemq.usage.Usage;
 /**
  * The Message Broker which routes messages, maintains subscriptions and
  * connections, acknowledges messages and handles transactions.
+ * broker消息服务器。
+ * 负责路由消息、保存订阅和连接、消息确认和控制事务。
+ * Producer把消息发送给Broker，Broker先把消息存储到磁盘中(enableJournalDiskSyncs配置选项)，然后再向Producer返回Acknowledge
+ * 模型：消息管家。
  */
 public interface Broker extends Region, Service {
 

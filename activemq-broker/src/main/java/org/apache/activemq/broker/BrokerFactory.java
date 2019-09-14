@@ -26,7 +26,7 @@ import org.apache.activemq.util.IOExceptionSupport;
  * A helper class to create a fully configured broker service using a URI. The
  * list of currently supported URI syntaxes is described <a
  * href="http://activemq.apache.org/how-do-i-embed-a-broker-inside-a-connection.html">here</a>
- * 
+ * Broker工厂模式。
  * 
  */
 public final class BrokerFactory {
@@ -67,6 +67,7 @@ public final class BrokerFactory {
         if (brokerURI.getScheme() == null) {
             throw new IllegalArgumentException("Invalid broker URI, no scheme specified: " + brokerURI);
         }
+        // 根据
         BrokerFactoryHandler handler = createBrokerFactoryHandler(brokerURI.getScheme());
         BrokerService broker = handler.createBroker(brokerURI);
         if (startBroker) {

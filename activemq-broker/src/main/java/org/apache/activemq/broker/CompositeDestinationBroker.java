@@ -29,8 +29,8 @@ import org.apache.activemq.command.ProducerInfo;
  * idea of what the current pre-fetch dispatch size is. If this is used, then
  * the client has to expect many more messages to be dispatched than the
  * pre-fetch setting allows.
- * 
- * 
+ *
+ * 多目的地Broker，Producer可以通过它将生产的消息传给多个destination.
  */
 public class CompositeDestinationBroker extends BrokerFilter {
 
