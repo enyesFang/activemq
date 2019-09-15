@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the {@link Transport} interface using raw tcp/ip
+ * TCP协议接口人，有该类实现与broker的数据交互。
  */
 public class TcpTransport extends TransportThreadSupport implements Transport, Service, Runnable {
 

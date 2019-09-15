@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  * <P>
  * A JMS provider should do its best to expire messages accurately; however, the
  * JMS API does not define the accuracy provided.
- *
+ * 消息生产者。
  *
  * @see javax.jms.TopicPublisher
  * @see javax.jms.QueueSender
@@ -74,6 +74,9 @@ public class ActiveMQMessageProducer extends ActiveMQMessageProducerSupport impl
 
     private static final Logger LOG = LoggerFactory.getLogger(ActiveMQMessageProducer.class);
 
+    /**
+     * producer 生产者基本信息。
+     */
     protected ProducerInfo info;
     protected boolean closed;
 

@@ -1097,7 +1097,9 @@ public class ActiveMQSession implements Session, QueueSession, TopicSession, Sta
      * a destination. Since <CODE>Queue </CODE> and <CODE>Topic</CODE> both
      * inherit from <CODE>Destination</CODE>, they can be used in the
      * destination parameter to create a <CODE>MessageProducer</CODE> object.
-     *
+     * 根据会话目标来创建此次会话的消息生产者。
+     * @see ActiveMQQueue 创建queue的生产者。
+     * @see ActiveMQTopic 创建topic的生产者。
      * @param destination the <CODE>Destination</CODE> to send to, or null if
      *                this is a producer which does not have a specified
      *                destination.
@@ -1335,6 +1337,7 @@ public class ActiveMQSession implements Session, QueueSession, TopicSession, Sta
     public Queue createQueue(String queueName) throws JMSException {
         checkClosed();
         if (queueName.startsWith(ActiveMQDestination.TEMP_DESTINATION_NAME_PREFIX)) {
+            // 使用"ID:"开始开头的是临时队列。
             return new ActiveMQTempQueue(queueName);
         }
         return new ActiveMQQueue(queueName);

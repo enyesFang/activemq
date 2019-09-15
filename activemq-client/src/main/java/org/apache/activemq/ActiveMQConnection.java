@@ -161,6 +161,10 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
     private boolean queueOnlyConnection = false;
     private boolean consumerExpiryCheckEnabled = true;
 
+    /**
+     * 数据传输方式。作为链接的重要属性。
+     * @see org.apache.activemq.transport.tcp.TcpTransport tcp传输
+     */
     private final Transport transport;
     private final IdGenerator clientIdGenerator;
     private final JMSStatsImpl factoryStats;
@@ -170,6 +174,9 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
     private final AtomicBoolean closing = new AtomicBoolean(false);
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final AtomicBoolean transportFailed = new AtomicBoolean(false);
+    /**
+     * 所有session会话集合。
+     */
     private final CopyOnWriteArrayList<ActiveMQSession> sessions = new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<ActiveMQConnectionConsumer> connectionConsumers = new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<TransportListener> transportListeners = new CopyOnWriteArrayList<>();
@@ -2194,6 +2201,7 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
      * Internal send method optimized: - It does not copy the message - It can
      * only handle ActiveMQ messages. - You can specify if the send is async or
      * sync - Does not allow you to send /w a transaction.
+     * 由Connection将消息投递出去。
      */
     void send(ActiveMQDestination destination, ActiveMQMessage msg, MessageId messageId, int deliveryMode, int priority, long timeToLive, boolean async) throws JMSException {
         checkClosedOrFailed();

@@ -113,6 +113,9 @@ public class ActiveMQMessageConsumer implements MessageAvailableConsumer, StatsC
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(ActiveMQMessageConsumer.class);
+    /**
+     * 消费者所属的会话。
+     */
     protected final ActiveMQSession session;
     protected final ConsumerInfo info;
 

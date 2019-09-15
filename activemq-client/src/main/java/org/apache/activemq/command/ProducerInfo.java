@@ -30,6 +30,9 @@ public class ProducerInfo extends BaseCommand {
     public static final byte DATA_STRUCTURE_TYPE = CommandTypes.PRODUCER_INFO;
 
     protected ProducerId producerId;
+    /**
+     * 消息目的。
+     */
     protected ActiveMQDestination destination;
     protected BrokerId[] brokerPath;
     protected boolean dispatchAsync;

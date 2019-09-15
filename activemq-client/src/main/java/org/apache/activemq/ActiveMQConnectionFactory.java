@@ -348,6 +348,7 @@ public class ActiveMQConnectionFactory extends JNDIBaseStorable implements Conne
         }
         ActiveMQConnection connection = null;
         try {
+            // 创建transport接口人，由
             Transport transport = createTransport();
             connection = createActiveMQConnection(transport, factoryStats);
 
