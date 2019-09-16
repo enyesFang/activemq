@@ -202,6 +202,12 @@ public class ActiveMQSession implements Session, QueueSession, TopicSession, Sta
     private static final Logger LOG = LoggerFactory.getLogger(ActiveMQSession.class);
     private final ThreadPoolExecutor connectionExecutor;
 
+    /**
+     * @see #AUTO_ACKNOWLEDGE 消息自动确认
+     * @see #CLIENT_ACKNOWLEDGE 客户端确认，即消息的确认需要client端选择时机手动去触发。这个方式给消息的确认提供了更加自由的方式；此方式针对消息消费者，消费者可以在接收到消息后，在任意时间调用此message.acknowledge()方法来确认消息
+     * @see ActiveMQMessage#acknowledge()
+     * @see #DUPS_OK_ACKNOWLEDGE "可重复消息确认"，此模式可以允许JMS提供者将一条消息向同一个目的地发送两次以上
+     */
     protected int acknowledgementMode;
     protected final ActiveMQConnection connection;
     protected final SessionInfo info;

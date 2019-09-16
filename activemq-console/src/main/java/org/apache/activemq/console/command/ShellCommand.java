@@ -41,6 +41,7 @@ public class ShellCommand extends AbstractCommand {
                     "Tasks:"}));
 
         ArrayList<Command> commands = getCommands();
+        // 按名称排序再执行？ 增加一个order是否会更好？
         Collections.sort(commands, new Comparator<Command>() {
             @Override
             public int compare(Command command, Command command1) {
@@ -159,6 +160,10 @@ public class ShellCommand extends AbstractCommand {
 
     }
 
+    /**
+     * 通过SPI加载Command。
+     * @return
+     */
     ArrayList<Command> getCommands() {
         ServiceLoader<Command> loader = ServiceLoader.load(Command.class);
         Iterator<Command> iterator = loader.iterator();

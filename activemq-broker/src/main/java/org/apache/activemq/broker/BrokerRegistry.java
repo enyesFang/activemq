@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ * Broker注册中心，单例模式。
  */
 public class BrokerRegistry {
 
@@ -32,6 +32,9 @@ public class BrokerRegistry {
     private static final BrokerRegistry INSTANCE = new BrokerRegistry();
 
     private final Object mutex = new Object();
+    /**
+     * brokerName 与 Broker 的Map。
+     */
     private final Map<String, BrokerService> brokers = new HashMap<String, BrokerService>();
 
     public static BrokerRegistry getInstance() {

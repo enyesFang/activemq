@@ -69,6 +69,10 @@ public abstract class Message extends BaseCommand implements MarshallAware, Mess
     protected long brokerOutTime;
     protected String correlationId;
     protected ActiveMQDestination replyTo;
+    /**
+     * 是否持久化。
+     * @see javax.jms.DeliveryMode
+     */
     protected boolean persistent;
     protected String type;
     protected byte priority;

@@ -108,6 +108,11 @@ import org.apache.activemq.util.ThreadPoolUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 代表底层一个物理(或者逻辑上)的一个Socket链接通道,此链接将会保持活跃直到JMS Client关闭或者JMS提供者(即JMS server端)在socket上阻塞超时.
+ * 通常情况下,Connection为一个TCP链接(长连接),一个JMS Client建议维持一个Connection即可,事实上Queue/Topic不同类型的Client,
+ * 那么也将创建不同的Connection.对于Server而言,Socket的资源开支是昂贵的,尽量避免一个Client创建多个Connection的情况.
+ */
 public class ActiveMQConnection implements Connection, TopicConnection, QueueConnection, StatsCapable, Closeable, TransportListener, EnhancedConnection {
 
     public static final String DEFAULT_USER = ActiveMQConnectionFactory.DEFAULT_USER;
@@ -130,6 +135,9 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
     private ExceptionListener exceptionListener;
     private ClientInternalExceptionListener clientInternalExceptionListener;
     private boolean clientIDSet;
+    /**
+     * 是否将client端的connectionInfo信息发送给Broker？
+     */
     private boolean isConnectionInfoSentToBroker;
     private boolean userSpecifiedClientID;
 
@@ -170,8 +178,14 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
     private final JMSStatsImpl factoryStats;
     private final JMSConnectionStatsImpl stats;
 
+    /**
+     * 当前Connection状态。
+     */
     private final AtomicBoolean started = new AtomicBoolean(false);
     private final AtomicBoolean closing = new AtomicBoolean(false);
+    /**
+     * closed状态：表示不再接受消息。
+     */
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final AtomicBoolean transportFailed = new AtomicBoolean(false);
     /**
@@ -359,6 +373,9 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
      * an administrator in a <CODE> ConnectionFactory</CODE> object or assigned
      * dynamically by the application by calling the <code>setClientID</code>
      * method.
+     * 获得当前JMS Client的ID;
+     * 每个Connection,对于JMS提供者而言,就被认为是一个Client,clientId用来表示全局中唯一的一个链接,由server端生成;
+     * 不同的JMS提供者对此ID的生成策略有所不同.
      *
      * @return the unique client identifier
      * @throws JMSException if the JMS provider fails to return the client ID
@@ -398,7 +415,9 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
      * If another connection with the same <code>clientID</code> is already
      * running when this method is called, the JMS provider should detect the
      * duplicate ID and throw an <CODE>InvalidClientIDException</CODE>.
-     *
+     * 设置ClientID,此操作需要在建立Connection之后,未使用Connection进行任何实际操作之前(包括创建session)进行;否则将会抛出异常.
+     * 因为clientID是JMS server用来唯一标记链接的,因此在全局中不能重复,如果尝试设定一个已有的ClientId,将会抛出InvalidClientIDException.
+     * 不过此方法可能在某些JMS Provider上不被支持.
      * @param newClientID the unique client identifier
      * @throws JMSException if the JMS provider fails to set the client ID for
      *                 this connection due to some internal error.
@@ -417,6 +436,7 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
         }
 
         if (this.isConnectionInfoSentToBroker) {
+            // 未使用Connection之前可以设置。
             throw new IllegalStateException("Setting clientID on a used Connection is not allowed");
         }
 
@@ -484,7 +504,8 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
      * <P>
      * A JMS provider should attempt to resolve connection problems itself
      * before it notifies the client of them.
-     *
+     * 设定Connection失效异常监听器,当JMS Client检测到链接异常,比如链接异常断开,将会通知此listener,
+     * 可以在listener中做一些日志记录/补救措施,比如重新建立链接/会话恢复等.
      * @param listener the exception listener
      * @throws JMSException if the JMS provider fails to set the exception
      *                 listener for this connection.
@@ -523,7 +544,8 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
      * Starts (or restarts) a connection's delivery of incoming messages. A call
      * to <CODE>start</CODE> on a connection that has already been started is
      * ignored.
-     *
+     *  "开启"消息接收,此后即可接收消息;不过对于Producer而言,无论链接处于何种状态,均可以发送消息;
+     *  此方法主要对消费者有效.此操作对Connection上所有的session都有效.
      * @throws JMSException if the JMS provider fails to start message delivery
      *                 due to some internal error.
      * @see javax.jms.Connection#stop()
@@ -566,10 +588,11 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
      * <CODE>stop</CODE> call must wait until all of them have returned before
      * it may return. While these message listeners are completing, they must
      * have the full services of the connection available to them.
-     *
+     * "终止"消息接收,此后将不能接收到消息;当链接重新被start之后,将仍然可以继续接收.
      * @throws JMSException if the JMS provider fails to stop message delivery
      *                 due to some internal error.
      * @see javax.jms.Connection#start()
+     * @see #close() 彻底关闭连接。
      */
     @Override
     public void stop() throws JMSException {
@@ -633,7 +656,12 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
      * a closed connection's session must throw an
      * <CODE>IllegalStateException</CODE>. Closing a closed connection must
      * NOT throw an exception.
-     *
+     * 关闭链接,底层为直接关闭socket;与Connection有关的临时(temporary)目的地都将被删除(包括TemporaryQueue,TemporaryTopic),
+     * 以及此Connection有关的Sessions/productor/consumer都将被关闭.
+     * JMS规范要求,如果close方法返回意味着connection中所有的send操作已经结束,消息接收的receive方法已经返回(或中断);
+     * close方法会导致事务中的session无法继续,可能会rollback.
+     * Session createSession(boolean transacted,int acknowledgeMode):创建会话,并指定此Session的事务性和消息确认模式.
+     * @see #stop() 临时暂时不接受消息。
      * @throws JMSException if the JMS provider fails to close the connection
      *                 due to some internal error. For example, a failure to
      *                 release resources or to close a socket connection can
@@ -2202,6 +2230,7 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
      * only handle ActiveMQ messages. - You can specify if the send is async or
      * sync - Does not allow you to send /w a transaction.
      * 由Connection将消息投递出去。
+     * @param deliveryMode 查看DeliveryMode
      */
     void send(ActiveMQDestination destination, ActiveMQMessage msg, MessageId messageId, int deliveryMode, int priority, long timeToLive, boolean async) throws JMSException {
         checkClosedOrFailed();

@@ -40,6 +40,8 @@ import java.util.StringTokenizer;
 /**
  * Main class that can bootstrap an ActiveMQ broker console. Handles command
  * line argument parsing to set up and run broker tasks.
+ * ActiveMq的Main启动类。
+ * @see org.apache.activemq.console.command.ShellCommand#main(String[], InputStream, PrintStream) 调用ShellCommand启动。
  */
 public class Main {
 
