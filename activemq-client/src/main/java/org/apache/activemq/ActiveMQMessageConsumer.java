@@ -424,7 +424,7 @@ public class ActiveMQMessageConsumer implements MessageAvailableConsumer, StatsC
      * The effect of calling <CODE>MessageConsumer.setMessageListener</CODE>
      * while messages are being consumed by an existing listener or the consumer
      * is being used to consume messages synchronously is undefined.
-     *
+     * 向consumer对象中设置一个messageListener对象，用来接收消息.
      * @param listener the listener to which the messages are to be delivered
      * @throws JMSException if the JMS provider fails to receive the next
      *                 message due to some internal error.

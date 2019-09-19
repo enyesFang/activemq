@@ -95,6 +95,10 @@ public class ActiveMQMessage extends Message implements org.apache.activemq.Mess
         return thisMsg != null && oMsg != null && oMsg.equals(thisMsg);
     }
 
+    /**
+     * @see javax.jms.Session#AUTO_ACKNOWLEDGE
+     * @throws JMSException
+     */
     @Override
     public void acknowledge() throws JMSException {
         if (acknowledgeCallback != null) {
