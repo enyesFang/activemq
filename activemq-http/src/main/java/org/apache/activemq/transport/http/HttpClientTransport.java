@@ -69,6 +69,8 @@ import org.slf4j.LoggerFactory;
  * A HTTP {@link org.apache.activemq.transport.Transport} which uses the
  * <a href="http://hc.apache.org/index.html">Apache HTTP Client</a>
  * library
+ * HTTP协议。
+ * 运行客户端使用REST或Ajax的方式进行连接，这意味着可以直接使用JavaScript向ActiveMQ发送消息。
  */
 public class HttpClientTransport extends HttpTransportSupport {
 

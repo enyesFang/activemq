@@ -24,6 +24,7 @@ import org.apache.activemq.transport.Transport;
 /**
  * Interface for a WebSocket Transport which provide hooks that a servlet can
  * use to pass along WebSocket data and events.
+ * 通过webSocket的方式连接到消息服务器。
  */
 public interface WSTransport extends Transport {
 

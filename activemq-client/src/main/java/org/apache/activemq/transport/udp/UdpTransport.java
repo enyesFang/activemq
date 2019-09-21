@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the {@link Transport} interface using raw UDP
+ * 客户端使用UCP协议连接到远程服务器
  */
 public class UdpTransport extends TransportThreadSupport implements Transport, Service, Runnable {
 

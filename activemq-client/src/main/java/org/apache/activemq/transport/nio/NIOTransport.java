@@ -38,7 +38,7 @@ import org.apache.activemq.wireformat.WireFormat;
 
 /**
  * An implementation of the {@link Transport} interface using raw tcp/ip
- *
+ * NIO与TCP的作用一样，只不过NIO使用的是Java的NIO包，这可能在某些场景下提供更好的性能。
  *
  */
 public class NIOTransport extends TcpTransport {

@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A multicast based transport.
- * 
- * 
+ * 使用组播传输的方式连接到消息服务器。
+ *
  */
 public class MulticastTransport extends UdpTransport {
 

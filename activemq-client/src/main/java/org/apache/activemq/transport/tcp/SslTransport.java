@@ -43,6 +43,7 @@ import org.apache.activemq.wireformat.WireFormat;
  * for needClientAuth was not provided on purpose. This is because
  * needClientAuth's value must be set before the socket is connected. Otherwise,
  * unexpected situations may occur.
+ * 在TCP协议的基础上使用SSL。
  */
 public class SslTransport extends TcpTransport {
 
